@@ -10,6 +10,10 @@ import java.util.Date;
 
 public class AccountJdbcTest extends TestCase {
     AccountJdbc accountJdbc = new AccountJdbc();
+    int isIncome = 1;
+    int money = 500;
 
     public void testSaveAccount() { accountJdbc.saveAccount(account);}
+
+    public void testUpdateAccount() {accountJdbc.updateAccount(account, isIncome, money);}
 }
