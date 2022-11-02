@@ -14,7 +14,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 public class GoalJdbc {
-    public int saveGoal(Goal goal){
+    // -> 조서영
+    // 목표저장
+    public int saveGoal(Goal goal){ // -> 조서영
         //db 접근 설정정보///////////////////////////////////////////////////
         String db_url = "jdbc:mysql://localhost:3306/saengji";
         String db_user = "root";
@@ -25,7 +27,7 @@ public class GoalJdbc {
         ResultSet rs = null;
         int result = 0;
 
-        String sql = "INSERT INTO goal(userId, goalAmount, goalPeriod) "+
+        String sql = "INSERT INTO goal(userId, goalAmount, goalStartDate, goalEndDate) "+
                 "VALUES(?,?,?)";
 
         try{
@@ -58,6 +60,8 @@ public class GoalJdbc {
         return result;
     }
 
+    // -> 조서영
+    // 목표달성
     //1 반환시 목표 달성 성공, 0 반환시 목표 달성실패
     public int achieveGoal(int goalId){
         //db 접근 설정정보///////////////////////////////////////////////////
@@ -108,6 +112,8 @@ public class GoalJdbc {
         }
     }
 
+    // -> 김희원
+    // 목표 조회
     // 목표를 리스트 형식으로 출력
     public void listGoal(){
         //db 접근 설정정보///////////////////////////////////////////////////
@@ -129,10 +135,11 @@ public class GoalJdbc {
             rs = stmt.executeQuery(sql);
             // Goal goal = new Goal();
 
-            System.out.println("ID \t userId \t goalAmount \t goalPeriod ");
+            System.out.println("ID \t userId \t goalAmount \t goalStartDate \t goalEndDate ");
             while(rs.next()) {
                 System.out.println(rs.getInt("ID") + "\t" + rs.getInt("userId") + "\t"
-                                + rs.getInt("goalAmount") + "\t" + rs.getDate("goalPeriod") + "\t"
+                                + rs.getInt("goalAmount") + "\t" + rs.getDate("goalStartDate") + "\t"
+                                + rs.getDate("goalEndDate")
                                     );
             }
         }catch (SQLException e){

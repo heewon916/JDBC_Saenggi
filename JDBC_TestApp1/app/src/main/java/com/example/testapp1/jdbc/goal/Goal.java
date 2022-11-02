@@ -6,16 +6,18 @@ public class Goal {
     private int ID;
     private int userId;
     private int goalAmount;
-    private Date goalPeriod;
+    private Date goalStartDate;
+    private Date goalEndDate;
 
     //constructor
     public Goal(){
 
     }
-    public Goal(int userId, int goalAmount, Date goalPeriod) {
+    public Goal(int userId, int goalAmount, Date goalStartDate, Date goalEndDate) {
         this.userId = userId;
         this.goalAmount = goalAmount;
-        this.goalPeriod = goalPeriod;
+        this.goalStartDate = goalStartDate;
+        this.goalEndDate = goalEndDate;
     }
 
     //getter, setter
@@ -43,11 +45,19 @@ public class Goal {
         this.goalAmount = goalAmount;
     }
 
-    public Date getGoalPeriod() {
-        return goalPeriod;
+    public Date getGoalStartDate() {
+        return goalStartDate;
     }
 
-    public void setGoalPeriod(Date goalPeriod) {
-        this.goalPeriod = goalPeriod;
+    public Date getGoalEndDate() {
+        return goalEndDate;
+    }
+
+    public void setGoalStartDate(Date goalStartDate) {
+        this.goalStartDate = goalStartDate;
+    }
+
+    public void setGoalEndDate(Date goalEndDate) {
+        this.goalEndDate = goalEndDate;
     }
 }

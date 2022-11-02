@@ -14,6 +14,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 public class AccountJdbc {
+    // -> 김희원
     // 계좌 저장; ID값 리턴(계좌아이디)
     public int saveAccount(Account account){
         //db 접근 설정정보///////////////////////////////////////////////////
@@ -46,6 +47,7 @@ public class AccountJdbc {
                     result = rs.getInt(1);
                 }
             }
+            return result;
 
         }catch(SQLException ex){
             System.out.println(ex.getMessage());
@@ -58,8 +60,10 @@ public class AccountJdbc {
         }
     }
 
+    // -> 김희원
+    // 잔액 수정
     // 반영 성공시 1, 반영 실패시 0
-    public int updateAccount(Account account, int isIncome, int money){
+    public int updateBalance(Account account, int isIncome, int money){
         //db 접근 설정정보///////////////////////////////////////////////////
         String db_url = "jdbc:mysql://localhost:3306/saengji";
         String db_user = "root";
@@ -96,6 +100,7 @@ public class AccountJdbc {
                     result = rs.getInt(1);
                 }
             }
+            return result;
         } catch (SQLException ex) {
             System.out.println(ex.getMessage());
         } finally {

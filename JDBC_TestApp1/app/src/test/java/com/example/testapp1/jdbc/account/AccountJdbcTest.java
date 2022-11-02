@@ -15,5 +15,5 @@ public class AccountJdbcTest extends TestCase {
 
     public void testSaveAccount() { accountJdbc.saveAccount(account);}
 
-    public void testUpdateAccount() {accountJdbc.updateAccount(account, isIncome, money);}
+    public void testUpdateBalance() {accountJdbc.updateBalance(account, isIncome, money);}
 }
