@@ -1,5 +1,6 @@
 package main.java.goal;
 
+import main.java.Jdbc_Util;
 import main.java.goal.Goal;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -23,24 +24,16 @@ import java.util.stream.IntStream;
 
 
 public class GoalJdbc {
-    // -> 조서영
-    // 목표저장
-    public int saveGoal(Goal goal) { // -> 조서영
-        //db 접근 설정정보///////////////////////////////////////////////////
-        String db_url = "jdbc:mysql://localhost:3306/saengji";
-        String db_user = "root";
-        String db_password = "hkim916!@";
-        ///////////////////////////////////////////////////////////////////
 
-        // for insert a new user
+    public int saveGoal(Goal goal){
         ResultSet rs = null;
         int result = 0;
 
-        String sql = "INSERT INTO goal(userId, goalAmount, goalStartDate, goalEndDate) " +
+        String sql = "INSERT INTO goal(userId, goalAmount, goalStartDate, GoalEndDate) "+
                 "VALUES(?,?,?,?)";
 
-        try {
-            Connection conn = DriverManager.getConnection(db_url, db_user, db_password);
+        try{
+            Connection conn = Jdbc_Util.getConnection();
             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
             pstmt.setInt(1, goal.getUserId());
@@ -50,19 +43,19 @@ public class GoalJdbc {
             pstmt.setDate(4, valueOf(df.format(goal.getGoalEndDate())));
 
             int rowAffected = pstmt.executeUpdate();
-            if (rowAffected == 1) {
+            if(rowAffected==1){
                 //get user id
-                rs = pstmt.getGeneratedKeys();
-                if (rs.next()) {
-                    result = rs.getInt(1);
+                rs=pstmt.getGeneratedKeys();
+                if(rs.next()){
+                    result=rs.getInt(1);
                 }
             }
-        } catch (SQLException e) {
+        }catch (SQLException e){
             System.out.println(e.getMessage());
-        } finally {
-            try {
-                if (rs != null) rs.close();
-            } catch (SQLException e) {
+        }finally{
+            try{
+                if(rs!=null) rs.close();
+            }catch (SQLException e){
                 System.out.println(e.getMessage());
             }
         }
@@ -70,12 +63,51 @@ public class GoalJdbc {
         return result;
     }
 
-    // -> 조서영
-    // 목표달성
     //1 반환시 목표 달성 성공, 0 반환시 목표 달성실패
-//    public int achieveGoal(int goalId) {
-//    }
+    public int achieveGoal(int goalId){
+        // for select a user
+        String sql = "SELECT * "+
+                "FROM goal "+
+                "WHERE ID="+goalId+"";
 
+        Statement stmt = null;
+        ResultSet rs = null;
+        try {
+            Connection conn = Jdbc_Util.getConnection();
+            stmt  = conn.createStatement();
+            rs = stmt.executeQuery(sql);
+            Goal goal = new Goal();
+            while(rs.next()) {
+                goal.setID(goalId);
+                goal.setUserId(rs.getInt("userId"));
+                goal.setGoalAmount(rs.getInt("goalAmount"));
+                goal.setGoalStartDate(rs.getDate("goalStartDate"));
+                goal.setGoalEndDate(rs.getDate("goalEndDate"));
+            }
+
+            //goalPeriod내에 목표한 금액만큼 모았는지 확인//////////////////
+            String sql2 = "SELECT sum(income), userId, incomeDate " +
+                    "from income " +
+                    "where incomeDate>='" + goal.getGoalStartDate() + "' " +
+                    "and incomeDate<= '" + goal.getGoalEndDate() + "' " +
+                    "and userId=" + goal.getUserId();
+
+            stmt  = conn.createStatement();
+            rs = stmt.executeQuery(sql2);
+            int incomeAmount = 0;
+            while(rs.next()) {
+                incomeAmount = rs.getInt("sum(income)");
+            }
+            //////////////////////////////////////////////////////////
+            if(incomeAmount>=goal.getGoalAmount()){
+                return 1;
+            }else{
+                return 0;
+            }
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+    }
     // -> 김희원
     // 목표 조회
     // 목표를 리스트 형식으로 출력
@@ -90,21 +122,14 @@ public class GoalJdbc {
     }
 
     public JSONArray listGoal(int userId) {
-        //db 접근 설정정보///////////////////////////////////////////////////
-        String db_url = "jdbc:mysql://localhost:3306/saengji";
-        String db_user = "root";
-        String db_password = "hkim916!@";
-        ///////////////////////////////////////////////////////////////////
-
         // for insert a new user
         ResultSet rs = null;
         Statement stmt = null;
-        Connection conn = null;
 
         String sql = "SELECT * from GOAL where userId = " + userId;
         JSONArray jsonArray = new JSONArray();
         try {
-            conn = DriverManager.getConnection(db_url, db_user, db_password);
+            Connection conn = Jdbc_Util.getConnection();
             Statement st = conn.createStatement(
                     ResultSet.TYPE_SCROLL_INSENSITIVE,
                     ResultSet.CONCUR_READ_ONLY

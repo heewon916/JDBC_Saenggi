@@ -1,5 +1,7 @@
 package main.java.account;
 
+import main.java.Jdbc_Util;
+
 import static java.sql.Date.valueOf;
 
 import java.sql.Connection;
@@ -12,6 +14,44 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 public class AccountJdbc {
+    public int setMainAccount(int accountId){
+        int result=0;
+        String sql = "UPDATE account " +
+                "SET mainAccount = 0 "+
+                "WHERE mainAccount = 1;";
+        String sql_new = "UPDATE account " +
+                "SET mainAccount = 1 "+
+                "WHERE ID=?";
+
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        PreparedStatement pstmt2 = null;
+        ResultSet rs = null;
+        try {
+            conn = Jdbc_Util.getConnection();
+            conn.setAutoCommit(false);
+            pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            pstmt2 = conn.prepareStatement(sql_new,Statement.RETURN_GENERATED_KEYS);
+            pstmt2.setInt(1,accountId);
+
+            int rowAffected1 = pstmt.executeUpdate();
+            int rowAffected2 = pstmt2.executeUpdate();
+            if(rowAffected1 == 1 && rowAffected2 == 1)
+            {
+                // get candidate id
+                rs = pstmt.getGeneratedKeys();
+                if(rs.next())
+                    result= rs.getInt(1);
+                conn.commit();
+            }else{
+                conn.rollback();
+            }
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+
+        return result;
+    }
     // -> 김희원
     // 계좌 저장; ID값 리턴(계좌아이디)
     public int saveAccount(Account account){
@@ -61,11 +101,6 @@ public class AccountJdbc {
     // 잔액 수정
     // 반영 성공시 1, 반영 실패시 0
     public int updateBalance(Account account, int isIncome, int money) {
-        //db 접근 설정정보///////////////////////////////////////////////////
-        String db_url = "jdbc:mysql://localhost:3306/saengji";
-        String db_user = "root";
-        String db_password = "hkim916!@";
-        ///////////////////////////////////////////////////////////////////
         Statement stmt = null;
 
         ResultSet rs = null;
@@ -83,7 +118,7 @@ public class AccountJdbc {
                 " WHERE ID = " + accountID;
 
         try {
-            Connection conn = DriverManager.getConnection(db_url, db_user, db_password);
+            Connection conn = Jdbc_Util.getConnection();
             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             pstmt.setInt(1, (accountAmount + sign * money));
             System.out.println(pstmt);
