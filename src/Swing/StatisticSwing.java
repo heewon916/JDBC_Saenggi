@@ -50,6 +50,7 @@ public class StatisticSwing extends JFrame {
 
         //기간 설정 버튼
         JPanel p_periodBtn = new JPanel();
+        // 첫 행 버튼 4개: 기간에 따른; 일간 주간 월간 년간
         p_periodBtn.setLayout(new GridLayout(1,4,1,1));
         JButton day_btn = new JButton("일일");
         JButton week_btn = new JButton("주간");
@@ -63,6 +64,7 @@ public class StatisticSwing extends JFrame {
         gbc.gridx=0;
         gbc.gridy=1;
         row.add(p_periodBtn,gbc);
+        // flagNum = 1일일 2주간 3월간 4년간
         day_btn.addActionListener(new ListenerPeriod(1));
         week_btn.addActionListener(new ListenerPeriod(2));
         month_btn.addActionListener(new ListenerPeriod(3));
@@ -70,6 +72,7 @@ public class StatisticSwing extends JFrame {
 
         //수입, 지출 선택 버튼
         JPanel p_moneyTpyeBtn = new JPanel();
+        // 두번째 행; 수입/지출;
         p_moneyTpyeBtn.setLayout(new GridLayout(1,2,1,1));
         JButton income_btn = new JButton("수입");
         JButton expense_btn = new JButton("지출");
@@ -79,6 +82,7 @@ public class StatisticSwing extends JFrame {
         gbc.gridx=0;
         gbc.gridy=2;
         row.add(p_moneyTpyeBtn,gbc);
+        // 1 수입 2 지출
         income_btn.addActionListener(new ListenerType(1));
         expense_btn.addActionListener(new ListenerType(2));
 
@@ -140,6 +144,7 @@ public class StatisticSwing extends JFrame {
         }
         @Override
         public void actionPerformed(ActionEvent arg0) {
+            // flagNum은 ListenerType()에 의해 지정됨
             type_flag = flagNum;
             //txtLog.removeAll();
             //txtLog.repaint();
@@ -151,7 +156,7 @@ public class StatisticSwing extends JFrame {
 
                 switch (period_flag) {
                     case 1:
-                        list = MenuJDBC.searchDaySum(1, Date.valueOf("2022-10-10"), Date.valueOf(date));
+                        list = MenuJDBC.searchDaySum(1, Date.valueOf(date), Date.valueOf(date));
                         if (type_flag == 1) {
                             for (int i = 0; i < list.size(); i++) {
                                 Map map = (Map) list.get(i);

@@ -84,8 +84,9 @@ class CalendarMain extends JFrame implements ActionListener{
                     }else{
                         selected_date = label.getText()+"-"+buttons[i].getText();
                     }
-
+                    System.out.println(selected_date);
                     StatisticSwing.date = selected_date;
+
                 }
             }
         }

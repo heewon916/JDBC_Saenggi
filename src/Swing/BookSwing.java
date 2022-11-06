@@ -25,33 +25,43 @@ class CalendarDataManager{
     public CalendarDataManager(){
         setToday();
     }
+
+    // 오늘 날짜 가져오기
     public void setToday(){
         calYear = today.get(Calendar.YEAR);
         calMonth = today.get(Calendar.MONTH);
         calDayOfMon = today.get(Calendar.DAY_OF_MONTH);
         makeCalData(today);
     }
+    // 캘린더 요일에 따른 날짜(수) 만들기
     private void makeCalData(Calendar cal){
+        // 무슨 요일부터 시작하는지 체크
         int calStartingPos = (cal.get(Calendar.DAY_OF_WEEK)+7-(cal.get(Calendar.DAY_OF_MONTH))%7)%7;
+        // 해당 월의 마지막 날짜 체크
         if(calMonth == 1) calLastDate = calLastDateOfMonth[calMonth] + leapCheck(calYear);
         else calLastDate = calLastDateOfMonth[calMonth];
+        // 캘린더 날짜 초기화
         for(int i = 0 ; i<CAL_HEIGHT ; i++){
             for(int j = 0 ; j<CAL_WIDTH ; j++){
                 calDates[i][j] = 0;
             }
         }
+        // 해당 월의 캘린더 날짜(숫자) 채우기
         for(int i = 0, num = 1, k = 0 ; i<CAL_HEIGHT ; i++){
-            if(i == 0) k = calStartingPos;
-            else k = 0;
+            if(i == 0) k = calStartingPos; // 첫 주의 시작하는 요일 체크
+            else k = 0; // 첫 주가 아니면 일요일부터 시작
             for(int j = k ; j<CAL_WIDTH ; j++){
                 if(num <= calLastDate) calDates[i][j]=num++;
             }
         }
     }
+    // 윤년 체크
     private int leapCheck(int year){
         if(year%4 == 0 && year%100 != 0 || year%400 == 0) return 1;
         else return 0;
     }
+
+    // 월 이동
     public void moveMonth(int mon){
         calMonth += mon;
         if(calMonth>11) while(calMonth>11){
@@ -66,6 +76,7 @@ class CalendarDataManager{
     }
 }
 
+//
 public class BookSwing extends CalendarDataManager{
     JFrame mainFrame;
     JPanel calOpPanel;
@@ -118,28 +129,41 @@ public class BookSwing extends CalendarDataManager{
         }
 
         calOpPanel = new JPanel();
+
         todayBut = new JButton("Today");
         todayBut.setToolTipText("Today");
         todayBut.addActionListener(lForCalOpButtons);
+
+        // 이전 년/월로 이동하는 버튼
         lYearBut = new JButton("<<");
         lYearBut.setToolTipText("Previous Year");
         lYearBut.addActionListener(lForCalOpButtons);
+
         lMonBut = new JButton("<");
         lMonBut.setToolTipText("Previous Month");
         lMonBut.addActionListener(lForCalOpButtons);
+
         curMMYYYYLab = new JLabel("<html><table width=100><tr><th><font size=5>"+calYear+"/"+((calMonth+1)<10?"&nbsp;":"")+(calMonth+1)+"</th></tr></table></html>");
+
+        // 다음 년/월로 이동하는 버튼
         nMonBut = new JButton(">");
         nMonBut.setToolTipText("Next Month");
         nMonBut.addActionListener(lForCalOpButtons);
+
         nYearBut = new JButton(">>");
         nYearBut.setToolTipText("Next Year");
         nYearBut.addActionListener(lForCalOpButtons);
+
+        // 전체 패널; 그리드백 레이아웃 적용
         calOpPanel.setLayout(new GridBagLayout());
         GridBagConstraints calOpGC = new GridBagConstraints();
+        // 좌측 상단 모서리의 시작 위치 지정
         calOpGC.gridx = 1;
         calOpGC.gridy = 1;
+        // 화면에 출력하는 행과 열의 수 지정
         calOpGC.gridwidth = 2;
         calOpGC.gridheight = 1;
+        // 크기 변경 시 , 변경되는 단위크기 지정
         calOpGC.weightx = 1;
         calOpGC.weighty = 1;
         calOpGC.insets = new Insets(5,5,0,0);
@@ -151,18 +175,22 @@ public class BookSwing extends CalendarDataManager{
         calOpGC.gridx = 1;
         calOpGC.gridy = 2;
         calOpPanel.add(lYearBut,calOpGC);
+
         calOpGC.gridwidth = 1;
         calOpGC.gridx = 2;
         calOpGC.gridy = 2;
         calOpPanel.add(lMonBut,calOpGC);
+
         calOpGC.gridwidth = 2;
         calOpGC.gridx = 3;
         calOpGC.gridy = 2;
         calOpPanel.add(curMMYYYYLab,calOpGC);
+
         calOpGC.gridwidth = 1;
         calOpGC.gridx = 5;
         calOpGC.gridy = 2;
         calOpPanel.add(nMonBut,calOpGC);
+
         calOpGC.gridwidth = 1;
         calOpGC.gridx = 6;
         calOpGC.gridy = 2;
