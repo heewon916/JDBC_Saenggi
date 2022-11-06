@@ -45,7 +45,7 @@ public class AccountJdbc {
         return result;
     }
 
-    //김희원
+    // 계좌 잔액 수정
     public int updateBalance(Account account, int isIncome, int money) {
         Statement stmt = null;
         ResultSet rs = null;
@@ -85,6 +85,7 @@ public class AccountJdbc {
         return result;
     }
 
+    // 계좌
     public List<Account> findAllAccounts(){
         String sql = "select * from account";
 
